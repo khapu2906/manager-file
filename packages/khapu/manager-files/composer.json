@@ -1,0 +1,34 @@
+{
+    "name": "khapu/manager-files",
+    "description": "Khapu is helping you manager all of files on your websites",
+    "type": "library",
+    "require": {
+        "php": "^7.3|^8.0",
+        "guzzlehttp/guzzle": "^7.0"
+    },
+    "require-dev": {
+    },
+    "autoload": {
+        "psr-4": {
+            "Khapu\\ManagerFiles\\": "src/",
+            "Khapu\\ManagerFiles\\Services\\": "src/Services/",
+            "Khapu\\ManagerFiles\\Services\\Abs\\": "src/Services/Abstract/",
+            "Khapu\\ManagerFiles\\Services\\Itf\\": "src/Services/Interface/"
+        }
+    },
+    "minimum-stability": "dev",
+    "authors": [
+        {
+            "name": "Khapu",
+            "email": "khapuonstage@gmail.com"
+        }
+    ],
+    "extra": {
+        "laravel": {
+            "providers": [
+                "Khapu\\ManagerFiles\\PackageBaseServiceProvider"
+            ],
+            "aliases": {}
+        }
+    }
+}
