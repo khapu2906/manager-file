@@ -27,60 +27,102 @@ final class DirectoryService extends AbstractDirectory implements InterfaceDirec
                 $this->setSubPath($subPath);
             }
             $path = $this->buildPath($subPath);
-            // dd($subPath);
-            // $path = ($subPath !== '') ? 
-            //         $this->buildPath($subPath) :
-            //         $this->basePath;
+            
             $type = (filetype($path) == 'dir') ? filetype($path) : $this->type($path);
             switch ($type) {
                 case 'dir': 
                     $listDir = scandir($path);
                     $this->count = count($listDir);
                     foreach ($listDir as $k => $v) {
+                        $d = [];
                         $pathName = ($this->subPath !== '') ? 
                             $this->buildPath($this->subPath . '/' . $v) :
                             $this->buildPath($v);
-                        $sizeConvert = $this->convertByteToOther($this->size($pathName, true));
-                        $privateType = (filetype($pathName) == 'dir') ? filetype($pathName) : $this->type($pathName);
-                        $arr = explode('/', $privateType);
-                        $typeArr['synthetic'] = $arr[0];                            
-                        $typeArr['detail'] = data_get($arr, '1', $arr[0]);                            
-                        $d = (object)[
-                            'name'          => basename($v),
-                            'basePath'      => $pathName,
-                            'subPath'       => $this->subPath . "/" . $v,
-                            'type'          => (object)$typeArr,
-                            'content'       => 'undefined',
-                            'size'          => $sizeConvert['value'],
-                            'unitSize'      => $sizeConvert['unit'],
-                            'permission'    => fileperms($pathName),
-                            'modifiedAt'    => date('F d Y H:i:s', filemtime($pathName)),
-                            'inodeChangeAt' => date('F d Y H:i:s', filectime($pathName)),
-                            'accessedAt'    => date('F d Y H:i:s', fileatime($pathName))
-                        ];
-                        $this->setOnlyData($d);
+                        foreach ($this->usedAttributes as $attribute) {
+                            switch ($attribute) {
+                                case 'name': 
+                                    $d[$attribute] = basename($v);
+                                    break;
+                                case 'basePath':
+                                    $d[$attribute] = $pathName;
+                                    break;
+                                case 'subPath':
+                                    $d[$attribute] = $this->subPath . "/" . $v;
+                                    break;
+                                case 'type':
+                                    $privateType = (filetype($pathName) == 'dir') ? filetype($pathName) : $this->type($pathName);
+                                    $arr = explode('/', $privateType);
+                                    $typeArr['synthetic'] = $arr[0];                            
+                                    $typeArr['detail'] = data_get($arr, '1', $arr[0]);   
+                                    $d[$attribute] = (object)$typeArr;
+                                    break;
+                                case 'content':
+                                    $d['content'] = 'undefined';
+                                    break;
+                                case 'size':
+                                case 'unitSize':
+                                    $sizeConvert = $this->convertByteToOther($this->size($pathName, true));
+                                    $d[$attribute] = ($attribute == 'size') ? $sizeConvert['value'] : $sizeConvert['unit'];
+                                    break;
+                                case 'permission': 
+                                    $d[$attribute] = fileperms($pathName);
+                                    break;
+                                case 'modifiedAt': 
+                                    $d[$attribute] = date('F d Y H:i:s', filemtime($pathName));
+                                    break;
+                                case 'inodeChangeAt': 
+                                    $d[$attribute] = date('F d Y H:i:s', filectime($pathName));
+                                    break;
+                                case 'accessedAt': 
+                                    $d[$attribute] = date('F d Y H:i:s', fileatime($pathName));
+                                    break;    
+                            }
+                        }
+                        $this->setOnlyData((object)$d);
                     }
                     break;
                 default:
-                    $sizeConvert = $this->convertByteToOther($this->size($path, true));
-                    $arr = explode('/', $type);
-                        $typeArr['synthetic'] = $arr[0];                            
-                        $typeArr['detail'] = data_get($arr, '1', $arr[0]);     
-                    $file = (object)[
-                        'name'          => basename($path),
-                        'basePath'      => $path,
-                        'subPath'       => './' . $this->subPath,
-                        'type'          => (object)$typeArr,
-                        'content'       => ($getContent) ? $this->read($path) : 'undefined',
-                        'size'          => $sizeConvert['value'],
-                        'unitSize'      => $sizeConvert['unit'],
-                        'permission'    => fileperms($path),
-                        'modifiedAt'    => date('F d Y H:i:s', filemtime($path)),
-                        'inodeChangeAt' => date('F d Y H:i:s', filectime($path)),
-                        'accessedAt'    => date('F d Y H:i:s', fileatime($path))
-                    ];
-                    // dd($this);
-                    $this->setOnlyData($file);
+                    $d = [];
+                    foreach ($this->usedAttributes as $attribute) {
+                        switch ($attribute) {
+                            case 'name': 
+                                $d[$attribute] = basename($path);
+                                break;
+                            case 'basePath':
+                                $d[$attribute] = $path;
+                                break;
+                            case 'subPath':
+                                $d[$attribute] = './' . $this->subPath;
+                                break;
+                            case 'type':
+                                $arr = explode('/', $type);
+                                $typeArr['synthetic'] = $arr[0];                            
+                                $typeArr['detail'] = data_get($arr, '1', $arr[0]);   
+                                $d[$attribute] = (object)$typeArr;
+                                break;
+                            case 'content':
+                                $d['content'] = 'undefined';
+                                break;
+                            case 'size':
+                            case 'unitSize':
+                                $sizeConvert = $this->convertByteToOther($this->size($path, true));
+                                $d[$attribute] = ($attribute == 'size') ? $sizeConvert['value'] : $sizeConvert['unit'];
+                                break;
+                            case 'permission': 
+                                $d[$attribute] = fileperms($path);
+                                break;
+                            case 'modifiedAt': 
+                                $d[$attribute] = date('F d Y H:i:s', filemtime($path));
+                                break;
+                            case 'inodeChangeAt': 
+                                $d[$attribute] = date('F d Y H:i:s', filectime($path));
+                                break;
+                            case 'accessedAt': 
+                                $d[$attribute] = date('F d Y H:i:s', fileatime($path));
+                                break;    
+                        }
+                    }
+                    $this->setOnlyData((object)$d);
                     break;
             }
             return $this;

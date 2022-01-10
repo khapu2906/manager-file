@@ -13,7 +13,7 @@ class BaseController extends Controller
      */
     public $_storage;
 
-    public $_menuFolder = [];
+    public $_menuFolders = [];
 
     public function __construct(Storage $storage)
     {
@@ -27,7 +27,7 @@ class BaseController extends Controller
             foreach ($folders as $folder) {
                 switch ($folder->type->synthetic) {
                     case 'dir':
-                        array_push($this->_menuFolder, $folder);
+                        array_push($this->_menuFolders, $folder);
                         break;
                 }
             }

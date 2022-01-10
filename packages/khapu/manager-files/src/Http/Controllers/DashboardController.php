@@ -12,7 +12,11 @@ class DashboardController extends BaseController
         $folderInfo = $this->_storage->open($fileName);
         $this->setMenuFolder($folderInfo);
         $folders = $folderInfo->get();
-        return view('khapu-filemanager::dashboard.index', ['folders' => $folders]);
+        return view('khapu-filemanager::dashboard.index', 
+            [
+                'folders' => $folders,
+                'menuFolders' => $this->_menuFolders
+        ]);
     }
 
     public function create($fileName)

@@ -9,7 +9,7 @@ interface FileInterface
      */
     public static function getInstance(string $path, array $allowMethod);
 
-    public function open(string $filePath = '', bool $getContent = false);
+    public function open(string $filePath = '', array $attributes = [], bool $getContent = false);
     
     /**
      * @param string $fileName

@@ -27,14 +27,20 @@ class StorageFileService
         return self::$_instance;
     }
 
-    private function open(string $filePath, bool $getContent = false)
+    private function open(string $filePath, array $attributes = [], bool $getContent = false)
     {
         
-        $folders = $this->_directoryService->open($filePath, $getContent);
+        $folders = $this->_directoryService;
+
+        if (!empty($attributes)) {
+            $attributes = array_merge_recursive($attributes, ['name', 'type']);
+            $folders->need($attributes);
+        }
+
+        $folders->open($filePath, $getContent);
         $oldData = $folders->get();
         $newData = [];
         foreach ($oldData as $element) {
-            // $element->subPath = str_replace('/', '|', $element->subPath);
             switch ($element->type->synthetic) {
                 case 'dir':
                     if (strpos($element->name, '.') === false) {

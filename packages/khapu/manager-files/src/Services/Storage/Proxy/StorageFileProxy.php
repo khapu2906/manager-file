@@ -23,9 +23,9 @@ class StorageFileProxy implements FileInterface
     }
 
 
-    public function open(string $filePath = '', bool $getContent = false)
+    public function open(string $filePath = '', array $attributes = [], bool $getContent = false)
     {
-        return $this->_storage->open($filePath, $getContent);
+        return $this->_storage->open($filePath, $attributes, $getContent);
     }
 
     public function read($fileName, $status = false)

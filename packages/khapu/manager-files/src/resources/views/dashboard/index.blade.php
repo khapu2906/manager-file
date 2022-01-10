@@ -15,13 +15,13 @@
                             <a href="">Storage</a>
                         </p>
                         <div class="folder-submenu">
-                            <a href="#">Folder 1</a>
-                            <a href="#">Folder 2</a>
-                            <a href="#">Folder 3</a>
-                            <a href="#">Folder 4</a>
-                            <a href="#">Folder 5</a>
+                            @foreach($menuFolders as $dir)
+                                <a href="{{asset("khapu-manage-files/" . $dir->subPath)}}">{{$dir->name}}</a>
+                            @endforeach
                         </div>
-                        <span class="btn-show"><i class="fa fa-plus"></i></span>
+                        @if (count($menuFolders) > 0)
+                            <span class="btn-show"><i class="fa fa-plus"></i></span>
+                        @endif
                     </div>
                     <div class="item-folder">
                         <p class="name">

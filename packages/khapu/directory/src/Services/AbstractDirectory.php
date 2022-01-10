@@ -22,21 +22,26 @@ abstract class AbstractDirectory
     protected $type;
 
     /**
-     * @var array $attributes - the attribute of a directory
+     * @var array $attributes - the attributes of a directory
      */
-    public $attributes = [
+    protected $attributes = [
         'name',
         'basePath',
         'subPath',
-        'type',
-        'size',
+        'type' ,
+        'size' ,
         'content',
         'unitSize',
         'permission',
-        'modified_at',
-        'inode_change_at',
-        'accessed_at'
+        'modifiedAt',
+        'inodeChangeAt',
+        'accessedAt'    
     ];
+
+    /**
+     * @var array $afterAttributes - the attributes are used
+     */
+    protected $usedAttributes = [];
 
     /**
      * @var array $dataValue - the data value is list of file in this directory
@@ -54,6 +59,7 @@ abstract class AbstractDirectory
     public function __construct(string $path = '')
     {
         $this->setPath($path);
+        $this->usedAttributes = $this->attributes;
     }
 
     /**
@@ -123,9 +129,25 @@ abstract class AbstractDirectory
         return $this->dataValue;
     }
 
+    /**
+     * @return array $dataValue -- get the first element of dataValue
+     */
     public function first()
     {
         return current($this->dataValue);
+    }
+
+    public function need(array $attributes)
+    {
+        $newArr = [];
+        foreach ($attributes as $attribute) {
+            if (in_array($attribute, $this->attributes)) {
+                array_push($newArr, $attribute);
+            } else {
+                throw new Exception("Attribute not found! ");
+            }
+        }
+        $this->usedAttributes = $newArr;
     }
 
     /**
