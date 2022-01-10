@@ -17,38 +17,71 @@ final class DirectoryService extends AbstractDirectory implements InterfaceDirec
         return $dir;
     }
 
-    public function getInsideDir(string $subPath = '', $type = 'dir')
+    public function open(string $subPath = '', bool $getContent = false)
     {   
-        $listDir = [];
         try{
-            if ($subPath == '') {
-                $listDir = scandir($this->basePath);
+            $subPath = ($subPath == '') ? '.' : $subPath;
+            if ($this->basePath == '') {
+                $this->setPath($subPath);
             } else {
-                if ('dir' === $type) {
-                    $this->setSubPath($subPath);
-                    $listDir = scandir($this->buildPath($this->subPath));
-                } else {
-                    $listDir = glob($subPath);
-                }
-            }  
-
-            foreach ($listDir as $k => $v) {
-                $pathName = ($this->subPath !== '') ? 
-                    $this->buildPath($this->subPath . '/' .$v) :
-                    $this->buildPath($v);
-                $sizeConvert = $this->convertByteToOther($this->checkSize($pathName, true));
-                $d = (object)[
-                    'name' => $v,
-                    'url' =>  $pathName,
-                    'type' => (filetype($pathName) == 'dir') ? filetype($pathName) : $this->checkType($v),
-                    'size' => $sizeConvert['value'],
-                    'unitSize' => $sizeConvert['unit'],
-                    'permission' => fileperms($pathName),
-                    'modifiedAt' => date('F d Y H:i:s', filemtime($pathName)),
-                    'inodeChangeAt' => date('F d Y H:i:s', filectime($pathName)),
-                    'accessedAt' => date('F d Y H:i:s', fileatime($pathName))
-                ];
-                $this->setOnlyData($d);
+                $this->setSubPath($subPath);
+            }
+            $path = $this->buildPath($subPath);
+            // dd($subPath);
+            // $path = ($subPath !== '') ? 
+            //         $this->buildPath($subPath) :
+            //         $this->basePath;
+            $type = (filetype($path) == 'dir') ? filetype($path) : $this->type($path);
+            switch ($type) {
+                case 'dir': 
+                    $listDir = scandir($path);
+                    $this->count = count($listDir);
+                    foreach ($listDir as $k => $v) {
+                        $pathName = ($this->subPath !== '') ? 
+                            $this->buildPath($this->subPath . '/' . $v) :
+                            $this->buildPath($v);
+                        $sizeConvert = $this->convertByteToOther($this->size($pathName, true));
+                        $privateType = (filetype($pathName) == 'dir') ? filetype($pathName) : $this->type($pathName);
+                        $arr = explode('/', $privateType);
+                        $typeArr['synthetic'] = $arr[0];                            
+                        $typeArr['detail'] = data_get($arr, '1', $arr[0]);                            
+                        $d = (object)[
+                            'name'          => basename($v),
+                            'basePath'      => $pathName,
+                            'subPath'       => $this->subPath . "/" . $v,
+                            'type'          => (object)$typeArr,
+                            'content'       => 'undefined',
+                            'size'          => $sizeConvert['value'],
+                            'unitSize'      => $sizeConvert['unit'],
+                            'permission'    => fileperms($pathName),
+                            'modifiedAt'    => date('F d Y H:i:s', filemtime($pathName)),
+                            'inodeChangeAt' => date('F d Y H:i:s', filectime($pathName)),
+                            'accessedAt'    => date('F d Y H:i:s', fileatime($pathName))
+                        ];
+                        $this->setOnlyData($d);
+                    }
+                    break;
+                default:
+                    $sizeConvert = $this->convertByteToOther($this->size($path, true));
+                    $arr = explode('/', $type);
+                        $typeArr['synthetic'] = $arr[0];                            
+                        $typeArr['detail'] = data_get($arr, '1', $arr[0]);     
+                    $file = (object)[
+                        'name'          => basename($path),
+                        'basePath'      => $path,
+                        'subPath'       => './' . $this->subPath,
+                        'type'          => (object)$typeArr,
+                        'content'       => ($getContent) ? $this->read($path) : 'undefined',
+                        'size'          => $sizeConvert['value'],
+                        'unitSize'      => $sizeConvert['unit'],
+                        'permission'    => fileperms($path),
+                        'modifiedAt'    => date('F d Y H:i:s', filemtime($path)),
+                        'inodeChangeAt' => date('F d Y H:i:s', filectime($path)),
+                        'accessedAt'    => date('F d Y H:i:s', fileatime($path))
+                    ];
+                    // dd($this);
+                    $this->setOnlyData($file);
+                    break;
             }
             return $this;
         } catch (Exception $e) {
@@ -56,7 +89,7 @@ final class DirectoryService extends AbstractDirectory implements InterfaceDirec
         }    
     }
 
-    public function checkSize(string $file = null, bool $status = false)
+    public function size(string $file = null, bool $status = false)
     {
         if ($status) {
             return ($file !== null) ? filesize($file) : filesize($this->basePath);
@@ -64,14 +97,21 @@ final class DirectoryService extends AbstractDirectory implements InterfaceDirec
         return ($file !== null) ? filesize($this->buildPath($file)) : filesize($this->basePath);
     }
 
-    public function checkType(string $fileName)
+    public function type(string $filePath)
     {
-        $arr = explode('.', $fileName);
-        $extension = end($arr);
-        if (array_key_exists($extension, (array)$this->listType)) {
-            return $this->listType->{$extension};
+        try {
+            $baseType = filetype($filePath);
+            switch ($baseType) {
+                case 'dir':
+                    return $baseType;
+                default :
+                    $content = $this->read($filePath);
+                    $f = finfo_open();
+                    return finfo_buffer($f, $content, FILEINFO_MIME_TYPE);
+            }
+        } catch (Exception $e) {
+            throw new Exception("Dir not found");
         }
-        return '';
     }
 
     public function create(string $fileName = null, $type = 'dir', int $mode = 0777, bool $recursive = false)
@@ -91,10 +131,13 @@ final class DirectoryService extends AbstractDirectory implements InterfaceDirec
     }
 
 
-    public function read(string $fileName = null)
+    public function read(string $filePath)
     {
-        $file = ($fileName !== null) ? $this->buildPath($fileName) : $this->basePath;
-        file_get_contents($file, $use_includebasePath = FALSE, $offset = 0);
+        try {
+            return file_get_contents($filePath, false);
+        } catch(Exception $e) {
+            throw new Exception("File not found");
+        }
     }
 
     public function remove(string $fileName = null, $type = 'dir', $context = '')

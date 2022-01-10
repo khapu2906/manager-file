@@ -7,11 +7,17 @@ interface FileInterface
     /**
      * @return FileInterface 
      */
-    // public static function getInstance();
+    public static function getInstance(string $path, array $allowMethod);
 
-    public function open();
-
-    public function read();
+    public function open(string $filePath = '', bool $getContent = false);
+    
+    /**
+     * @param string $fileName
+     *  @param boolean $status - status is false that mean param file is sub-path, else param is full-path
+     * 
+     * @return string
+     */
+    public function read(string $fileName, bool $status = false);
 
     public function create();
 

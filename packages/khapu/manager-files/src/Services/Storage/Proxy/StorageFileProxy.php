@@ -8,19 +8,29 @@ class StorageFileProxy implements FileInterface
 {
     private $_storage;
 
+    private static $_instance;
+
     public function __construct($path, $allowMethod)
     {
-        $this->_storage = new Storage($path, $allowMethod);
+        $this->_storage = Storage::getInstance($path, $allowMethod);
     }
 
-    public function open()
-    {
-        return $this->_storage->open();
+    public static function getInstance($path, $allowMethod) {
+        if (null == self::$_instance) {
+            self::$_instance = new self($path, $allowMethod);
+        }
+        return self::$_instance;
     }
 
-    public function read()
+
+    public function open(string $filePath = '', bool $getContent = false)
     {
-        return $this->_storage->read();
+        return $this->_storage->open($filePath, $getContent);
+    }
+
+    public function read($fileName, $status = false)
+    {
+        return $this->_storage->read($fileName, $status);
     }
 
     public function create()

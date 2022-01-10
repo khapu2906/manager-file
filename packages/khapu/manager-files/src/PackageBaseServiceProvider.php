@@ -10,7 +10,7 @@ use Illuminate\Foundation\Bootstrap\LoadConfiguration;
 class PackageBaseServiceProvider extends ServiceProvider
 {
 
-    protected const MODULE_PATH =  __DIR__.'/';
+    protected const MODULE_PATH =  __DIR__ . '/';
     
     protected const MODULE_CONFIG = 'config/khapufile.php';
 

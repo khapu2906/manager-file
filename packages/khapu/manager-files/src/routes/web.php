@@ -4,7 +4,9 @@ use Illuminate\Support\Facades\Route;
 
 $namepace = 'Khapu\ManagerFiles\Http\Controllers';
 
-Route::namespace($namepace)->group(function () 
+Route::namespace($namepace)->prefix('khapu-manage-files')->group(function () 
 {
-    Route::get('khapu-manage-files', 'DashboardController@index');
+    // Route::get('/open/{fileName}', 'DashboardController@open');
+    Route::get('/{fileName?}', 'DashboardController@index')->where('fileName', '.*');
+
 });

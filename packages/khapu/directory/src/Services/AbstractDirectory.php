@@ -19,16 +19,18 @@ abstract class AbstractDirectory
      * @var object $listType - the list of file data types
      */
 
-    protected $listType;
+    protected $type;
 
     /**
      * @var array $attributes - the attribute of a directory
      */
     public $attributes = [
         'name',
-        'url' ,
+        'basePath',
+        'subPath',
         'type',
         'size',
+        'content',
         'unitSize',
         'permission',
         'modified_at',
@@ -42,12 +44,16 @@ abstract class AbstractDirectory
     protected $dataValue = [];
 
     /**
+     * @var int $count - the number of files in folder
+     */
+    public $count = 0;
+
+    /**
      * @param string $path 
      */
-    public function __construct(string $path)
+    public function __construct(string $path = '')
     {
         $this->setPath($path);
-        $this->setListType();
     }
 
     /**
@@ -91,25 +97,6 @@ abstract class AbstractDirectory
     }
 
     /**
-     * @return array
-     */
-    public function setListType()
-    {
-        try {
-            $config = require_once __DIR__ . "./../config/file.php";
-            $config = $config['type'];
-            foreach ($config as $type => $extensions) {
-                foreach ($extensions as $extension) {
-                    $this->listType[$extension] = $type;
-                }
-            }
-            $this->listType = (object)$this->listType;
-        } catch (Exception $e) {
-            throw new Exception("Config not found");
-        }
-    }
-
-    /**
      * @param object $data
      * 
      */
@@ -134,6 +121,11 @@ abstract class AbstractDirectory
     public function get()
     {
         return $this->dataValue;
+    }
+
+    public function first()
+    {
+        return current($this->dataValue);
     }
 
     /**

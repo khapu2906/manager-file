@@ -1,22 +1,24 @@
 <?php
+
 namespace Khapu\ManagerFiles\Http\Controllers;
 
-use App\Http\Controllers\Controller;
-use Khapu\ManagerFiles\Services\Storage\StorageFileManagerService as Storage;
+use Khapu\ManagerFiles\Http\Controllers\BaseController;
 
-class DashboardController extends Controller
+class DashboardController extends BaseController
 {
-    /**
-     * @var Storage
-     */
-    public $_storage;
-    public function __construct(Storage $storage)
+
+    public function index($fileName = '')
     {
-        $this->_storage = $storage;
-    }
-    public function index()
-    {
-        $folders = $this->_storage->getFile()->open()->dataValue;
+        $folderInfo = $this->_storage->open($fileName);
+        $this->setMenuFolder($folderInfo);
+        $folders = $folderInfo->get();
         return view('khapu-filemanager::dashboard.index', ['folders' => $folders]);
+    }
+
+    public function create($fileName)
+    {
+        // dd($fileName);
+        $file = $this->_storage->open($fileName);
+        dd($file);
     }
 }

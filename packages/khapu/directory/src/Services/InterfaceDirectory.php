@@ -11,11 +11,10 @@ interface InterfaceDirectory
 
     /**
      * @param string $subPath - use for touching more deeply to sub path
-     * @param string $type = 'dir' - use for searching, default value is dir
      * 
      * @return array
      */
-    public function getInsideDir(string $subPath = '', $type = 'dir');
+    public function open(string $subPath = '', bool $getContent = false);
 
     /**
      * @param string $file    - use to check size of file, default value is null, function with hanlde
@@ -24,12 +23,12 @@ interface InterfaceDirectory
      * 
      * @return int - size in Byte
      */
-    public function checkSize(string $file = null, bool $status = false);
+    public function size(string $file = null, bool $status = false);
 
     /**
-     * @param string $fileName - include file extension
+     * @param string $filePath
      */
-    public function checkType(string $fileName);
+    public function type(string $filePath);
     /**
      * @param string $fileName 
      * @param string $type 
@@ -40,9 +39,11 @@ interface InterfaceDirectory
      */
     public function create(string $fileName = null, $type = 'dir', int $mode = 0777, bool $recursive = false);
 
+    /**
+     * @param string $filePath
+     */
 
-
-    public function read(string $fileName = null);
+    public function read(string $filePath);
 
     /**
      * @param string $fileName 

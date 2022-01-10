@@ -96,29 +96,43 @@
                             </label>
                         </div>
                         <div class="sct-item name">
-                                @switch($folder->type) 
-                                @case('img') 
+                            @switch($folder->type->synthetic) 
+                                @case('image') 
                                     <i class="fa fa-file-image-o" aria-hidden="true"></i>
-                                    @break;
+                                    @break
                                 @case('video')
                                     <i class="fa fa-file-video-o" aria-hidden="true"></i>
-                                    @break;
+                                    @break
                                 @case('text')
                                     <i class="fa fa-file-text-o" aria-hidden="true"></i>
-                                    @break;
-                                @case('sheet')
-                                    <i class="fa fa-file-excel-o" aria-hidden="true"></i>
-                                    @break;
+                                    @break
+                                @case('application')
+                                    @switch($folder->type->detail)
+                                        @case('vnd.openxmlformats-officedocument.spreadsheetml.sheet')
+                                            <i class="fa fa-file-excel-o" aria-hidden="true"></i>
+                                            @break
+                                        @case('vnd.openxmlformats-officedocument.presentationml.presentation')
+                                            <i class="fa fa-file-powerpoint-o" aria-hidden="true"></i>
+                                            @break;
+                                        @case('zip')
+                                        @case('x-rar')
+                                            <i class="fa fa-file-archive-o" aria-hidden="true"></i>
+                                            @break
+                                        @default
+                                            <i class="fa fa-folder" aria-hidden="true"></i>
+                                            @break
+                                    @endswitch        
+                                    @break
                                 @case('audio')
                                     <i class="fa fa-file-audio-o" aria-hidden="true"></i>
-                                    @break;
+                                    @break
                                 @case('press')
-                                    @break;
+                                    @break
                                 @default
                                     <i class="fa fa-folder" aria-hidden="true"></i>
-                                    @break;
+                                    @break
                             @endswitch
-                            <p>{{$folder->name}}</p>
+                            <p><a href="{{asset("khapu-manage-files/" . $folder->subPath)}}">{{$folder->name}}</a></p>
                             <span class="btn-sx"></span>
                         </div>
                         <div class="sct-item size">

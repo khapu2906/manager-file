@@ -422,7 +422,7 @@ span.btn-star {
 .content-sct .sct-item.name i.fa-file-image-o {
     margin-right: 10px;
     font-size: 24px;
-    color: #B283E1;
+    color: #b60001;
 }
 
 .content-sct .sct-item.name i.fa-file-video-o {
@@ -437,10 +437,28 @@ span.btn-star {
     color: #207245;
 }
 
+.content-sct .sct-item.name i.fa-file-powerpoint-o {
+    margin-right: 10px;
+    font-size: 24px;
+    color: #e65835;
+}
+
+.content-sct .sct-item.name i.fa-file-archive-o {
+    margin-right: 10px;
+    font-size: 24px;
+    color: black;
+}
+
+.content-sct .sct-item.name i.fa-file-excel-o {
+    margin-right: 10px;
+    font-size: 24px;
+    color: #207245;
+}
+
 .content-sct .sct-item.name i.fa-file-audio-o {
     margin-right: 10px;
     font-size: 24px;
-    color: #f59925;
+    color: #fe9134;
 }
 
 .content-sct .sct-item.name i.fa-file-text-o {

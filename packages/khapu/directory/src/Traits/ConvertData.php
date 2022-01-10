@@ -4,11 +4,16 @@ namespace Khapu\Directory\Traits;
 
 trait ConvertData
 {
-    public function convertByteToOther(int $value, int $size = 1)
+    /**
+     * @param int $value - value be needed to convert
+     * @param int $size - size of desired data
+     * @param bool $binary - if binary is false 
+     */
+    public function convertByteToOther(int $value, int $size = 1, bool $binary = true)
     {
         $da = $value;
         $i = 0;
-        $si = $size;
+        $convert = ($binary) ? 1024 : 1000;
         $unit = ['B', 'KB', 'MB', 'GB', 'TB', 'PB', 'EB', 'ZB', 'YB', 'BB', 'GB'];
         if ($da === 0) {
             return [
@@ -16,8 +21,8 @@ trait ConvertData
                 'unit' => $unit[$i]
             ];
         }
-        while (($da / 1024) >= $size) {
-            $da = $da / 1024;
+        while (($da / $convert) >= $size) {
+            $da = $da / $convert;
             $i ++;
         }
         return [

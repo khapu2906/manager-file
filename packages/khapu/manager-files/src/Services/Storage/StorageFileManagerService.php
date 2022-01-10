@@ -19,8 +19,8 @@ class StorageFileManagerService extends FileManagerService
     public function getFile()
     {
         $path = __DIR__ . "/../../../../../../{$this->url}";
-        $file = new Storage($path, $this->getAllowMethod());
-        return $file;
+        $file = Storage::getInstance($path, $this->getAllowMethod());    
+        return $file;   
     }
 
     public function manageAction(string $action, array $params = [])

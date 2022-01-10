@@ -6,7 +6,7 @@ return [
         'forder_name' => '',
         'use_auth' => false,
         'action' => [
-            'open'      => true,
+            'open'      => false,
             'read'      => true,
             'create'    => true,
             'update'    => true,
