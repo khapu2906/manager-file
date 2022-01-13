@@ -6,14 +6,14 @@ use Exception;
 abstract class AbstractDirectory
 {
     /**
-     * @var string $path - the path of dir or file 
+     * @var string $basePath - the path of dir or file 
      */
-    public $basePath = '';
+    public $basePath = '.';
 
     /**
      * @var string $subPath - the sub-path of dir
      */
-    public $subPath = '';
+    public $subPath = '.';
 
     /**
      * @var object $listType - the list of file data types
@@ -56,10 +56,25 @@ abstract class AbstractDirectory
     /**
      * @param string $path 
      */
-    public function __construct(string $path = '')
+    public function __construct(string $path = '.')
     {
         $this->setPath($path);
         $this->usedAttributes = $this->attributes;
+    }
+
+    /**
+     * @param string $path
+     * @return AbstractDirectory
+     */
+
+    public function come(string $path)
+    {
+        if ($this->basePath == '.') {
+            $this->basePath = $path;
+        } else {
+            $this->subPath = $path;
+        }
+        return $this;
     }
 
     /**

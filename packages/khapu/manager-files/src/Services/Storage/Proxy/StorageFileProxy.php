@@ -33,9 +33,9 @@ class StorageFileProxy implements FileInterface
         return $this->_storage->read($fileName, $status);
     }
 
-    public function create()
+    public function create(string $filePath, string $fileName, bool $dir)
     {
-        return $this->_storage->create();
+        return $this->_storage->create($filePath, $fileName, $dir);
     }
 
     public function update()

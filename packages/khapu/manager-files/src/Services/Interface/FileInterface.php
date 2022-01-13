@@ -15,11 +15,17 @@ interface FileInterface
      * @param string $fileName
      *  @param boolean $status - status is false that mean param file is sub-path, else param is full-path
      * 
-     * @return string
+     * @return 
      */
     public function read(string $fileName, bool $status = false);
 
-    public function create();
+    /**
+     * @param string $fileName
+     *  @param boolean $dir
+     * 
+     * @return 
+     */
+    public function create(string $filePath, string $fileName, bool $dir);
 
     public function update();
 

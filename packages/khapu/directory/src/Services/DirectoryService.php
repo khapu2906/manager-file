@@ -17,16 +17,16 @@ final class DirectoryService extends AbstractDirectory implements InterfaceDirec
         return $dir;
     }
 
-    public function open(string $subPath = '', bool $getContent = false)
+    public function open(bool $getContent = false)
     {   
         try{
-            $subPath = ($subPath == '') ? '.' : $subPath;
-            if ($this->basePath == '') {
-                $this->setPath($subPath);
-            } else {
-                $this->setSubPath($subPath);
-            }
-            $path = $this->buildPath($subPath);
+            // $subPath = ($subPath == '') ? '.' : $subPath;
+            // if ($this->basePath == '') {
+            //     $this->setPath($subPath);
+            // } else {
+            //     $this->setSubPath($subPath);
+            // }
+            $path = $this->buildPath($this->subPath);
             
             $type = (filetype($path) == 'dir') ? filetype($path) : $this->type($path);
             switch ($type) {
@@ -61,7 +61,7 @@ final class DirectoryService extends AbstractDirectory implements InterfaceDirec
                                     break;
                                 case 'size':
                                 case 'unitSize':
-                                    $sizeConvert = $this->convertByteToOther($this->size($pathName, true));
+                                    $sizeConvert = $this->formatSizeData($this->size($pathName, true));
                                     $d[$attribute] = ($attribute == 'size') ? $sizeConvert['value'] : $sizeConvert['unit'];
                                     break;
                                 case 'permission': 
@@ -105,7 +105,7 @@ final class DirectoryService extends AbstractDirectory implements InterfaceDirec
                                 break;
                             case 'size':
                             case 'unitSize':
-                                $sizeConvert = $this->convertByteToOther($this->size($path, true));
+                                $sizeConvert = $this->formatSizeData($this->size($path, true));
                                 $d[$attribute] = ($attribute == 'size') ? $sizeConvert['value'] : $sizeConvert['unit'];
                                 break;
                             case 'permission': 
@@ -156,20 +156,18 @@ final class DirectoryService extends AbstractDirectory implements InterfaceDirec
         }
     }
 
-    public function create(string $fileName = null, $type = 'dir', int $mode = 0777, bool $recursive = false)
+    public function create(string $fileName = null, bool $dir = true, int $mode = 0777, bool $recursive = false)
     {
-        $file = ($fileName !== null) ? $this->buildPath($fileName) : $this->basePath;
-        $result = false;
-        switch ($type) {
-            case 'dir':
-                $result = mkdir($file, $mode, $recursive);
-                break;
-            case 'file':
-                $result = touch($file, time());
-                break;
+        // dd($this);
+        try {
+            $file = $this->basePath . '/' . $this->subPath . '/' . $fileName;
+            if ($dir == true) {
+                return mkdir($file, $mode, $recursive);
+            }
+            return touch($file, time());
+        } catch (Exception $e) {
+            throw new Exception("Dir not found");
         }
-
-        return $result;
     }
 
 

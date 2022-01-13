@@ -14,7 +14,7 @@ interface InterfaceDirectory
      * 
      * @return array
      */
-    public function open(string $subPath = '', bool $getContent = false);
+    public function open(bool $getContent = false);
 
     /**
      * @param string $file    - use to check size of file, default value is null, function with hanlde
@@ -31,13 +31,13 @@ interface InterfaceDirectory
     public function type(string $filePath);
     /**
      * @param string $fileName 
-     * @param string $type 
+     * @param string $dir 
      * @param int $mode
      * @param bool $recursive
      * 
      * @return boolean
      */
-    public function create(string $fileName = null, $type = 'dir', int $mode = 0777, bool $recursive = false);
+    public function create(string $fileName = null, bool $dir = true, int $mode = 0777, bool $recursive = false);
 
     /**
      * @param string $filePath

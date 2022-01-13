@@ -30,14 +30,14 @@ class StorageFileService
     private function open(string $filePath, array $attributes = [], bool $getContent = false)
     {
         
-        $folders = $this->_directoryService;
+        $folders = $this->_directoryService->come($filePath);
 
         if (!empty($attributes)) {
             $attributes = array_merge_recursive($attributes, ['name', 'type']);
             $folders->need($attributes);
         }
 
-        $folders->open($filePath, $getContent);
+        $folders->open($getContent);
         $oldData = $folders->get();
         $newData = [];
         foreach ($oldData as $element) {
@@ -71,9 +71,10 @@ class StorageFileService
         return $this->_directoryService->read($fileName, $status);
     }
 
-    private function create()
+
+    private function create(string $filePath, string $fileName, bool $dir)
     {
-        return $this->_directoryService->create();
+        return $this->_directoryService->come($filePath)->create($fileName, $dir);
     }
 
     private function update()
