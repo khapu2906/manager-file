@@ -43,6 +43,16 @@ class StorageFileProxy implements FileInterface
         return $this->_storage->update();
     }
 
+    public function delete(string $filePath)
+    {
+        return $this->_storage->delete($filePath);
+    }
+
+    public function rename(string $filePath, string $fileName)
+    {
+        return $this->_storage->rename($filePath, $fileName);
+    }
+
     public function upload()
     {
         return $this->_storage->upload();

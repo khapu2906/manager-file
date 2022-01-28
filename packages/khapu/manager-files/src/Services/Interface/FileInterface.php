@@ -29,6 +29,10 @@ interface FileInterface
 
     public function update();
 
+    public function delete(string $filePath);
+
+    public function rename(string $filePath, string $fileName);
+
     public function upload();
 
     public function download();

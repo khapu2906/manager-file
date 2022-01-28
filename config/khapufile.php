@@ -10,6 +10,8 @@ return [
             'read'      => true,
             'create'    => true,
             'update'    => true,
+            'delete'    => true,
+            'rename'    => true,
             'upload'    => true,
             'download'  => true,     
         ],

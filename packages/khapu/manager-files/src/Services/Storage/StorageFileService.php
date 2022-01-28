@@ -31,7 +31,6 @@ class StorageFileService
     {
         
         $folders = $this->_directoryService->come($filePath);
-
         if (!empty($attributes)) {
             $attributes = array_merge_recursive($attributes, ['name', 'type']);
             $folders->need($attributes);
@@ -82,9 +81,15 @@ class StorageFileService
         return $this->_directoryService->update();
     }
 
-    private function remover()
+
+    private function delete(string $filePath)
     {
-        return $this->_directoryService->remove();
+        return $this->_directoryService->come($filePath)->remove($filePath);
+    }
+
+    private function rename(string $filePath, string $newName)
+    {
+        return $this->_directoryService->come($filePath)->rename($newName);
     }
 
     private function upload()

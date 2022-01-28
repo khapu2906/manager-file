@@ -53,7 +53,12 @@ interface InterfaceDirectory
      * @return boolean
      */
 
-    public function remove(string $fileName = null, $type = 'dir', $context = '');
+    public function remove($context = null);
+
+    /**
+     * @param string $newName;
+     */
+    public function rename(string $newName);
     
     public function update();
 

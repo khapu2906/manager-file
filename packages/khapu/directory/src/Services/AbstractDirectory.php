@@ -1,19 +1,30 @@
 <?php
 
 namespace Khapu\Directory\Services;
+use Khapu\Directory\Traits\Queries\Query;
 use Exception;
 
 abstract class AbstractDirectory
 {
+    use Query;
+
+    const LOGICS = ['and', 'or', 'exc'];
+
+    const OPERATORS = ['>', '<', '=', '<=', '>='];
     /**
-     * @var string $basePath - the path of dir or file 
+     * @var string $basePath - the path of base dir 
      */
     public $basePath = '.';
 
     /**
+     * @var string $fullPath = the 
+     */
+    public $fullPath = '.';
+
+    /**
      * @var string $subPath - the sub-path of dir
      */
-    public $subPath = '.';
+    public $subPath = '';
 
     /**
      * @var object $listType - the list of file data types
@@ -25,17 +36,7 @@ abstract class AbstractDirectory
      * @var array $attributes - the attributes of a directory
      */
     protected $attributes = [
-        'name',
-        'basePath',
-        'subPath',
-        'type' ,
-        'size' ,
-        'content',
-        'unitSize',
-        'permission',
-        'modifiedAt',
-        'inodeChangeAt',
-        'accessedAt'    
+       
     ];
 
     /**
@@ -49,6 +50,21 @@ abstract class AbstractDirectory
     protected $dataValue = [];
 
     /**
+     * @var array $where - 
+     */
+    protected $where = [];
+
+    /**
+     * @var int $limit
+     */
+    protected $limit = 0;
+
+    /**
+     * @var int $offset
+     */
+    protected $offset = 0;
+
+    /**
      * @var int $count - the number of files in folder
      */
     public $count = 0;
@@ -56,9 +72,11 @@ abstract class AbstractDirectory
     /**
      * @param string $path 
      */
-    public function __construct(string $path = '.')
+    public function __construct(string $path = '')
     {
         $this->setPath($path);
+        $this->setFullPath($path);
+        $this->attributes = array_keys(get_class_vars('Khapu\Directory\Subjects\Dir'));
         $this->usedAttributes = $this->attributes;
     }
 
@@ -69,11 +87,8 @@ abstract class AbstractDirectory
 
     public function come(string $path)
     {
-        if ($this->basePath == '.') {
-            $this->basePath = $path;
-        } else {
-            $this->subPath = $path;
-        }
+        $this->fullPath .= ($path !== '') ? '/' . $path: '';
+        $this->setSubPath($path);
         return $this;
     }
 
@@ -83,6 +98,14 @@ abstract class AbstractDirectory
     public function setPath(string $path)
     {
         $this->basePath = $path;
+    }
+
+    /**
+     * @param string $path
+     */
+    public function setFullPath(string $path)
+    {
+        $this->fullPath = $path;
     }
 
      /**
@@ -99,6 +122,14 @@ abstract class AbstractDirectory
     public function getPath()
     {
         return $this->basePath;
+    }
+
+    /**
+     * @return string
+     */
+    public function getFullPath()
+    {
+        return $this->fullPath;
     }
 
     /**

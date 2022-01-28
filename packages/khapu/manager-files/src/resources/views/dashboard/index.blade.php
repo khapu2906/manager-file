@@ -132,7 +132,7 @@
                                     <i class="fa fa-folder" aria-hidden="true"></i>
                                     @break
                             @endswitch
-                            <p><a href="{{asset("khapu-manage-files/" . $folder->subPath)}}">{{$folder->name}}</a></p>
+                            <p><a href="{{asset("khapu-manage-files/" . $subPath . '/' . $folder->subPath)}}">{{$folder->name}}</a></p>
                             <span class="btn-sx"></span>
                         </div>
                         <div class="sct-item size">

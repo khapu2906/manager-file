@@ -6,10 +6,11 @@ return [
         'forder_name' => '',
         'use_auth' => false,
         'action' => [
-            'open'      => false,
+            'open'      => true,
             'read'      => true,
             'create'    => true,
             'update'    => true,
+            'delete'    => true,
             'upload'    => true,
             'download'  => true,    
             'rename'    => true, 
